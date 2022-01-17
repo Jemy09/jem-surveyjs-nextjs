@@ -27,7 +27,7 @@ const Survey = (props) => {
 	const handleClick = () => {
 
         // Example 3:
-        setCustParam(true);
+        setCustParam(!custParam);
         console.log("HANDLE CLICK - CUSTOM PARAM: ", custParam)
     };
 
