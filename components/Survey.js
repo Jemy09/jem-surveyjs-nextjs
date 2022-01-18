@@ -13,9 +13,14 @@ const Survey = (props) => {
 
     // Avoid rehydration conflict
     // https://nextjs.org/docs/messages/react-hydration-error
-    const [hasMounted, setHasMounted] = useState(false);
+    const [hasMounted, setHasMounted]   = useState(false);
+    const [mySurvey, setMySurvey]       = useState({});
+
     useEffect(() => {
         setHasMounted(true);
+        setMySurvey( new SurveyJs.Model(surveyJSON) );
+
+
     }, []);
     if (!hasMounted) {
         return null;
@@ -31,6 +36,29 @@ const Survey = (props) => {
         console.log("HANDLE CLICK - CUSTOM PARAM: ", custParam)
     };
 
+    function onCompleteComponent( survey ) {
+		let resTxt = '';
+	
+		// prepare and send results to MongoDB
+		if ( Object.keys(survey.data).length ) {
+			let res = survey.data;
+			Object.keys(res).forEach( function(idx, itm) {
+				if ( Array.isArray(res[idx]) ) {
+					resTxt += '<strong>' + idx + ":</strong> " + res[idx].join() + "<br>"; 
+				}
+				else if (typeof res[idx] === 'string' || res[idx] instanceof String) {
+					resTxt += '<strong>' + idx + ":</strong> " + res[idx] + "<br>"; 
+				}
+			});
+
+			// render the text above
+			document
+			.querySelector('#surveyResult')
+			.innerHTML = resTxt;
+
+		}
+		//console.log("RESULT: " , resTxt)
+	}
 
     /**
 	 * afterRenderQuestionHandler
@@ -53,7 +81,6 @@ const Survey = (props) => {
 	}
 
 
-    let mySurvey = new SurveyJs.Model(surveyJSON);
     mySurvey.showCompletedPage = true;
 
     // Example 1:
@@ -64,6 +91,7 @@ const Survey = (props) => {
         <SurveyJs.Survey
             model={mySurvey}
             onAfterRenderQuestion={afterRenderQuestionHandler}
+			onComplete={onCompleteComponent}
         />
     );
 }

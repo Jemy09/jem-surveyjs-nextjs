@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <div>
 			<Survey />
+      <div id="surveyResult" className="surveyResults"></div>
     </div>
   )
 }
